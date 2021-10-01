@@ -43,7 +43,7 @@ def listWaivers(waivers):
 
 	applicationWaivers = waivers['applicationWaivers']
 
-	with open('componentWaivers.csv', 'w') as fd:
+	with open('waiverlist.csv', 'w') as fd:
 			for waiver in applicationWaivers:
 				applicationPublicId = waiver["application"]["publicId"]
 
