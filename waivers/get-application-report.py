@@ -93,6 +93,10 @@ def findViolation(evaluation, searchViolation):
 						reason = condition['conditionReason']
 						cve = getCVE(reason)
 
+					# use these to find the policyViolationId we need (captured above)
+					# if all 4 match fields in searchViolation we have out policyViolationId
+					# according to apply waiver API we need applicationName, policyViolationId
+					# ths is ths plan!
 					print (applicationName + " " + packageUrl + " " + policyName + " " + cve + "\n")
 
 	return
