@@ -4,11 +4,9 @@ import os
 import os.path
 import sys
 
-
 iqurl = sys.argv[1]
 iquser = sys.argv[2]
 iqpwd = sys.argv[3]
-
 
 def getNexusIqData(api):
 	url = "{}{}" . format(iqurl, api)
@@ -21,22 +19,6 @@ def getNexusIqData(api):
 		res = "Error fetching data"
 
 	return res
-
-
-def getPolicyIds(data):
-	policyIds = ""
-	policies = data['policies']
-
-	for policy in policies:
-		name = policy["name"]
-		id = policy["id"]
-
-		if name == "Security-Critical" or name == "Security-High" or name == "Security-Medium" or name == "License-Banned" or name == "License-None" or name == "License-Copyleft":
-			policyIds += "p=" + id + "&"
-
-	result = policyIds.rstrip('&')
-
-	return result
 
 
 def listWaivers(waivers):
@@ -64,7 +46,7 @@ def listWaivers(waivers):
 							scopeOwnerName = waivedPolicyViolation["policyWaiver"]["scopeOwnerName"]
 							scopeOwnerType = waivedPolicyViolation["policyWaiver"]["scopeOwnerType"]
 
-							line = applicationPublicId + "," + componentName + "," + policyName + "," + vulnerabilityId + "," + stageId + "," + comment + "," + scopeOwnerName + "," + scopeOwnerType
+							line = applicationPublicId + "," + componentName + "," + policyName + "," + vulnerabilityId + "," + stageId + "," + comment + "," + scopeOwnerName + "," + scopeOwnerType + "\n"
 							print(line)
 							fd.write(line)
 
@@ -74,6 +56,7 @@ def listWaivers(waivers):
 def main():
 	waivers = getNexusIqData('/api/v2/reports/components/waivers')
 	listWaivers(waivers)
+
 	# waiversfmt = json.dumps(waivers, indent=2)
 	# print(waiversfmt)
 
