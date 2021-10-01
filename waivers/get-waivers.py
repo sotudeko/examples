@@ -61,12 +61,13 @@ def listWaivers(waivers):
 							policyName = waivedPolicyViolation["policyName"]
 							vulnerabilityId = waivedPolicyViolation["policyWaiver"]["vulnerabilityId"]
 							comment = waivedPolicyViolation["policyWaiver"]["comment"]
+							scopeOwnerName = waivedPolicyViolation["policyWaiver"]["scopeOwnerName"]
+							scopeOwnerType = waivedPolicyViolation["policyWaiver"]["scopeOwnerType"]
 
-							line = applicationPublicId + "," + componentName + "," + policyName + "," + vulnerabilityId + "," + stageId + "," + comment + "\n"
+							line = applicationPublicId + "," + componentName + "," + policyName + "," + vulnerabilityId + "," + stageId + "," + comment + "," + scopeOwnerName + "," + scopeOwnerType
 							print(line)
 							fd.write(line)
 
-	print('componentWaivers.csv')
 	return
 
 
