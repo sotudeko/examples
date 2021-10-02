@@ -9,6 +9,10 @@ iqurl = sys.argv[1]
 iquser = sys.argv[2]
 iqpwd = sys.argv[3]
 
+datadir = "datafiles"
+existingWaiversCsv = "{}/{}".format(datadir, "existingWaivers.csv")
+applyWaiverCmds = "{}/{}".format(datadir, "applyWaiversCmds.txt")
+
 def getNexusIqData(api):
 	url = "{}{}" . format(iqurl, api)
 
@@ -122,8 +126,8 @@ def getWaiverCmd(policyViolationId, violation):
 
 def main():
 
-	with open('applywaivers.txt', 'w') as fd:
-		with open("waiverlist.csv") as csvfile:
+	with open(applyWaiverCmds, 'w') as fd:
+		with open(existingWaiversCsv) as csvfile:
 			csvdata = csv.reader(csvfile, delimiter=',')
 			for v in csvdata:
 

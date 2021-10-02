@@ -9,6 +9,16 @@ iqurl = sys.argv[1]
 iquser = sys.argv[2]
 iqpwd = sys.argv[3]
 
+datadir = "datafiles"
+
+if os.path.exists(datadir):
+	os.rmdir(datadir)
+
+os.mkdir(datadir)
+
+existingWaiversCsv = "{}/{}".format(datadir, "existingWaivers.csv")
+existingWaiversJson = "{}/{}".format(datadir, "existingWaivers.json")
+
 def getNexusIqData(api):
 	url = "{}{}" . format(iqurl, api)
 
@@ -26,7 +36,7 @@ def listWaivers(waivers):
 
 	applicationWaivers = waivers['applicationWaivers']
 
-	with open('waiverlist.csv', 'w') as fd:
+	with open(existingWaiversCsv, 'w') as fd:
 			for waiver in applicationWaivers:
 				applicationPublicId = waiver["application"]["publicId"]
 
@@ -57,10 +67,11 @@ def listWaivers(waivers):
 
 def main():
 	waivers = getNexusIqData('/api/v2/reports/components/waivers')
-	listWaivers(waivers)
 
-	with open("existingwaivers.json", "w") as wfile:
+	with open(existingWaiversJson, "w") as wfile:
 		json.dump(waivers, wfile, indent=2)
+
+	listWaivers(waivers)
 
 				
 if __name__ == '__main__':
