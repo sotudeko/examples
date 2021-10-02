@@ -148,6 +148,7 @@ def getWaiverCmd(policyViolationId, violation):
 
 def main():
 
+	countWaivers = 0
 	with open(applyWaiverCmds, 'w') as fd:
 		with open(existingWaiversCsv) as csvfile:
 			csvdata = csv.reader(csvfile, delimiter='\t')
@@ -166,8 +167,8 @@ def main():
 					"scopeTyId": v[9],
 
 				}
-
-				print("checking for: " + violation["applicationPublicId"])
+				countWaivers += 1
+				print(str(countWaivers) + " checking for: " + violation["applicationPublicId"])
 
 				applicationId = getApplicationId(violation["applicationPublicId"])
 
@@ -181,7 +182,6 @@ def main():
 						continue
 
 					waiverComd = getWaiverCmd(policyViolationId, violation)
-					print (waiverComd)
 					fd.write(waiverComd)
 
 
