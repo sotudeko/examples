@@ -3,6 +3,7 @@ import requests
 import os
 import os.path
 import sys
+import csv
 
 iqurl = sys.argv[1]
 iquser = sys.argv[2]
@@ -94,13 +95,11 @@ def findViolation(evaluation, searchViolation):
 						reason = condition['conditionReason']
 						cve = getCVE(reason)
 
-					# use these to find the policyViolationId we need (captured above)
-					# if all 4 match fields in searchViolation we have out policyViolationId
-					# according to apply waiver API we need applicationName, policyViolationId
-					# ths is ths plan!
-					# print (applicationName + " " + packageUrl + " " + policyName + " " + cve + "\n")
-
 					if applicationName == searchViolation["applicationPublicId"] and packageUrl == searchViolation["packageUrl"] and policyName == searchViolation["policyName"] and cve == searchViolation["cve"]:
+						# use these fields to find the policyViolationId we need (captured above)
+						# if all 4 match fields in searchViolation we have our policyViolationId
+						# for the apply waiver API we need applicationPublicId, policyViolationId
+						# print (applicationName + " " + packageUrl + " " + policyName + " " + cve + "\n")
 						foundPolicyViolationId = policyViolationId
 						break
 
@@ -108,28 +107,46 @@ def findViolation(evaluation, searchViolation):
 	return foundPolicyViolationId
 
 
+def getWaiverCmd(policyViolationId, violation):
+	_comment = "adding waiver"
+
+	applicationPublicId = violation["applicationPublicId"]
+	comment = violation["comment"]
+
+	if not comment == "":
+		_comment = comment
+
+	cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H \"Content-Type: application/json\" -d " + "'{\"comment\": \"" + _comment + "\"}' " + iqurl + "/api/v2/policyWaivers/application/" + applicationPublicId + "/" + policyViolationId + "\n"
+	return cmd
+
+
 def main():
 
-	violation = {
-		"applicationPublicId": "p1",
-		"packageUrl": "pkg:pypi/confire@0.2.0?extension=tar.gz",
-		"policyName": "Security-Critical",
-		"cve": "CVE-2017-16763",
-		"stage": "build",
-		"comment": "adding waiver"
-	}
+	with open('applywaivers.txt', 'w') as fd:
+		with open("waiverlist.csv") as csvfile:
+			csvdata = csv.reader(csvfile, delimiter=',')
+			for v in csvdata:
 
-	applicationId = getApplicationId(violation["applicationPublicId"])
-	applicationReportUrl = getApplicationReport(applicationId, violation["stage"])
-	evaluation = getEvaluationReport(applicationReportUrl)
-	policyViolationId = findViolation(evaluation, violation)
-	waiverComd = getWaiverCmd(policyViolationId, violation)
-	print (waiverComd)
+				violation = {
+					"applicationPublicId": v[0],
+					"packageUrl": v[1],
+					"hash": v[2],
+					"policyName": v[3],
+					"cve": v[4],
+					"stage": v[5],
+					"comment": v[6],
+					"scopeName": v[7],
+					"scopeType": v[8]
+				}
+
+				applicationId = getApplicationId(violation["applicationPublicId"])
+				applicationReportUrl = getApplicationReport(applicationId, violation["stage"])
+				evaluation = getEvaluationReport(applicationReportUrl)
+				policyViolationId = findViolation(evaluation, violation)
+				waiverComd = getWaiverCmd(policyViolationId, violation)
+				print (waiverComd)
+				fd.write(waiverComd)
 
 
-	# waiversfmt = json.dumps(waivers, indent=2)
-	# print(waiversfmt)
-
-				
 if __name__ == '__main__':
 	main()
