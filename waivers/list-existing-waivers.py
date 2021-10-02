@@ -5,6 +5,8 @@ import os
 import os.path
 import sys
 import shutil
+import csv
+
 
 iqurl = sys.argv[1]
 iquser = sys.argv[2]
@@ -33,11 +35,17 @@ def getNexusIqData(api):
 	return res
 
 
+
+def getCVE():
+	return "no-cve"
+
+
 def listWaivers(waivers):
 
 	applicationWaivers = waivers['applicationWaivers']
 
 	with open(existingWaiversCsv, 'w') as fd:
+			writer = csv.writer(fd, delimiter='\t')
 			for waiver in applicationWaivers:
 				applicationPublicId = waiver["application"]["publicId"]
 
@@ -54,14 +62,31 @@ def listWaivers(waivers):
 
 						for waivedPolicyViolation in waivedPolicyViolations:
 							policyName = waivedPolicyViolation["policyName"]
-							vulnerabilityId = waivedPolicyViolation["policyWaiver"]["vulnerabilityId"]
+
+							if "vulnerabilityId" in waivedPolicyViolation["policyWaiver"].keys():
+								vulnerabilityId = waivedPolicyViolation["policyWaiver"]["vulnerabilityId"]
+							else:
+								vulnerabilityId = getCVE()
+
 							comment = waivedPolicyViolation["policyWaiver"]["comment"]
 							scopeOwnerName = waivedPolicyViolation["policyWaiver"]["scopeOwnerName"]
 							scopeOwnerType = waivedPolicyViolation["policyWaiver"]["scopeOwnerType"]
+							scopeOwnerId = waivedPolicyViolation["policyWaiver"]["scopeOwnerId"]
 
-							line = applicationPublicId + "," + componentName + "," + componentHash + "," + policyName + "," + vulnerabilityId + "," + stageId + "," + comment + "," + scopeOwnerName + "," + scopeOwnerType + "\n"
+							line = []
+							line.append(applicationPublicId)
+							line.append(componentName)
+							line.append(componentHash)
+							line.append(policyName)
+							line.append(vulnerabilityId)
+							line.append(stageId)
+							line.append(comment)
+							line.append(scopeOwnerName)
+							line.append(scopeOwnerType)
+							line.append(scopeOwnerId)
+
 							print(line)
-							fd.write(line)
+							writer.writerow(line)
 
 	return
 

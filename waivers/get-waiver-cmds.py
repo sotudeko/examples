@@ -43,10 +43,7 @@ def getApplicationId(applicationPublicName):
 	applicationData = getNexusIqData(endPoint)
 
 	if applicationData["applications"]:
-		print("found application: " + applicationPublicName)
 		applicationId = applicationData["applications"][0]["id"]
-	else:
-		print("application not found: " + applicationPublicName)
 
 	return applicationId
 
@@ -120,15 +117,32 @@ def findViolation(evaluation, searchViolation):
 
 
 def getWaiverCmd(policyViolationId, violation):
-	_comment = "adding waiver"
+	applicationEndpoint = "/api/v2/policyWaivers/application/"
+	organizationEndpoint = "/api/v2/policyWaivers/organization/"
+	waiverComment = "adding waiver"
+	endPoint = ""
+	ROOT_ORG = "ROOT_ORGANIZATION_ID"
 
 	applicationPublicId = violation["applicationPublicId"]
 	comment = violation["comment"]
+	scopeType = violation["scopeType"]
+	scopeName = violation["scopeName"]
 
 	if not comment == "":
-		_comment = comment
+		waiverComment = comment
 
-	cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H \"Content-Type: application/json\" -d " + "'{\"comment\": \"" + _comment + "\"}' " + iqurl + "/api/v2/policyWaivers/application/" + applicationPublicId + "/" + policyViolationId + "\n"
+	if scopeType == "root_organization":
+		endPoint = organizationEndpoint
+		waiverScopeName = ROOT_ORG
+	elif scopeType == "organization":
+		endPoint = organizationEndpoint
+		waiverScopeName = scopeName
+	else:
+		endPoint = applicationEndpoint
+		waiverScopeName = scopeName
+
+
+	cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H \"Content-Type: application/json\" -d " + "'{\"comment\": \"" + waiverComment + "\"}' " + iqurl + endPoint + waiverScopeName + "/" + policyViolationId + "\n"
 	return cmd
 
 
@@ -136,7 +150,7 @@ def main():
 
 	with open(applyWaiverCmds, 'w') as fd:
 		with open(existingWaiversCsv) as csvfile:
-			csvdata = csv.reader(csvfile, delimiter=',')
+			csvdata = csv.reader(csvfile, delimiter='\t')
 			for v in csvdata:
 
 				violation = {
@@ -148,16 +162,24 @@ def main():
 					"stage": v[5],
 					"comment": v[6],
 					"scopeName": v[7],
-					"scopeType": v[8]
+					"scopeType": v[8],
+					"scopeTyId": v[9],
+
 				}
+
+				print("checking for: " + violation["applicationPublicId"])
 
 				applicationId = getApplicationId(violation["applicationPublicId"])
 
 				if (len(applicationId) > 0):
-					print("generate waiver command for: " + violation["applicationPublicId"])
 					applicationReportUrl = getApplicationReport(applicationId, violation["stage"])
 					evaluation = getEvaluationReport(applicationReportUrl)
 					policyViolationId = findViolation(evaluation, violation)
+
+					if  violation["cve"] == "no-cve":
+						print ("no-cve: " + violation["applicationPublicId"] + ":" + violation["packageUrl"] + ":" + violation["policyName"])
+						continue
+
 					waiverComd = getWaiverCmd(policyViolationId, violation)
 					print (waiverComd)
 					fd.write(waiverComd)
