@@ -6,9 +6,7 @@ import os.path
 import sys
 import shutil
 
-iqurl = sys.argv[1]
-iquser = sys.argv[2]
-iqpwd = sys.argv[3]
+waiverPayload = sys.argv[1]
 
 datadir = "datafiles"
 
@@ -20,17 +18,9 @@ os.mkdir(datadir)
 existingWaiversCsv = "{}/{}".format(datadir, "existingWaivers.csv")
 existingWaiversJson = "{}/{}".format(datadir, "existingWaivers.json")
 
-def getNexusIqData(api):
-	url = "{}{}" . format(iqurl, api)
 
-	req = requests.get(url, auth=(iquser, iqpwd), verify=False)
-
-	if req.status_code == 200:
-		res = req.json()
-	else:
-		res = "Error fetching data"
-
-	return res
+def getCVE():
+	return "no-cve"
 
 
 def listWaivers(waivers):
@@ -48,16 +38,34 @@ def listWaivers(waivers):
 					componentPolicyViolations = stage["componentPolicyViolations"]
 
 					for componentViolation in componentPolicyViolations:
-						componentName = componentViolation["component"]["packageUrl"]
+
+						if componentViolation["component"]["packageUrl"] is not None:
+							componentName = componentViolation["component"]["packageUrl"]
+						else:
+							componentName = "no-component-name"
+
 						componentHash = componentViolation["component"]["hash"]
 						waivedPolicyViolations = componentViolation["waivedPolicyViolations"]
 
 						for waivedPolicyViolation in waivedPolicyViolations:
 							policyName = waivedPolicyViolation["policyName"]
-							vulnerabilityId = waivedPolicyViolation["policyWaiver"]["vulnerabilityId"]
+
+							if "vulnerabilityId" in waivedPolicyViolation["policyWaiver"].keys():
+								vulnerabilityId = waivedPolicyViolation["policyWaiver"]["vulnerabilityId"]
+							else:
+								vulnerabilityId = getCVE()
+
 							comment = waivedPolicyViolation["policyWaiver"]["comment"]
-							scopeOwnerName = waivedPolicyViolation["policyWaiver"]["scopeOwnerName"]
-							scopeOwnerType = waivedPolicyViolation["policyWaiver"]["scopeOwnerType"]
+
+							if "scopeOwnerName" in waivedPolicyViolation["policyWaiver"]:
+								scopeOwnerName = waivedPolicyViolation["policyWaiver"]["scopeOwnerName"]
+							else:
+								scopeOwnerName = "no-scope-name"
+
+							if "scopeOwnerType" in waivedPolicyViolation["policyWaiver"]:
+								scopeOwnerType = waivedPolicyViolation["policyWaiver"]["scopeOwnerType"]
+							else:
+								scopeOwnerType = "no-scope-type"
 
 							line = applicationPublicId + "," + componentName + "," + componentHash + "," + policyName + "," + vulnerabilityId + "," + stageId + "," + comment + "," + scopeOwnerName + "," + scopeOwnerType + "\n"
 							print(line)
@@ -67,7 +75,8 @@ def listWaivers(waivers):
 
 
 def main():
-	waivers = getNexusIqData('/api/v2/reports/components/waivers')
+	f = open(waiverPayload)
+	waivers = json.load(f)
 
 	with open(existingWaiversJson, "w") as wfile:
 		json.dump(waivers, wfile, indent=2)

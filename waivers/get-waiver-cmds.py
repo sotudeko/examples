@@ -37,9 +37,17 @@ def getCVE(reason):
 
 
 def getApplicationId(applicationPublicName):
+	applicationId = ""
+
 	endPoint = "{}{}" . format("/api/v2/applications?publicId=", applicationPublicName)
 	applicationData = getNexusIqData(endPoint)
-	applicationId = applicationData["applications"][0]["id"]
+
+	if applicationData["applications"]:
+		print("found application: " + applicationPublicName)
+		applicationId = applicationData["applications"][0]["id"]
+	else:
+		print("application not found: " + applicationPublicName)
+
 	return applicationId
 
 
@@ -144,12 +152,15 @@ def main():
 				}
 
 				applicationId = getApplicationId(violation["applicationPublicId"])
-				applicationReportUrl = getApplicationReport(applicationId, violation["stage"])
-				evaluation = getEvaluationReport(applicationReportUrl)
-				policyViolationId = findViolation(evaluation, violation)
-				waiverComd = getWaiverCmd(policyViolationId, violation)
-				print (waiverComd)
-				fd.write(waiverComd)
+
+				if (len(applicationId) > 0):
+					print("generate waiver command for: " + violation["applicationPublicId"])
+					applicationReportUrl = getApplicationReport(applicationId, violation["stage"])
+					evaluation = getEvaluationReport(applicationReportUrl)
+					policyViolationId = findViolation(evaluation, violation)
+					waiverComd = getWaiverCmd(policyViolationId, violation)
+					print (waiverComd)
+					fd.write(waiverComd)
 
 
 if __name__ == '__main__':
