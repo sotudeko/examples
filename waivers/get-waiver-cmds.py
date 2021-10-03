@@ -129,7 +129,6 @@ def findViolation(evaluation, searchViolation):
 						foundPolicyViolationId = policyViolationId
 						break
 
-	print("pid" + foundPolicyViolationId)
 	return foundPolicyViolationId
 
 
