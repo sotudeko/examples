@@ -146,9 +146,7 @@ def getWaiverCmd(policyViolationId, violation):
 		endPoint = applicationEndpoint
 		waiverScopeName = scopeName
 
-	# cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H \"Content-Type: application/json\" -d " + "'{\"comment\": \"" + waiverComment + "\"}' " + iqurl + endPoint + waiverScopeName + "/" + policyViolationId + "\n"
-	                   # curl -u admin:admin123 -X POST -H "Content-Type: text/plain; charset=UTF-8" http://nexus-iq-server.sonatype.com:8070/api/v2/policyWaiver/81513a08599a4d399528c6184f0a9200/application --data-binary 'waiver comment (optional)'
-	cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: text/plain; charset=UTF-8' " + iqurl + "/api/v2/policyWaiver/" + policyViolationId + "/application" + " --data-binary " + waiverComment
+	cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H \"Content-Type: application/json\" -d " + "'{\"comment\": \"" + waiverComment + "\"}' " + iqurl + endPoint + waiverScopeName + "/" + policyViolationId + "\n"
 	return cmd
 
 
@@ -165,58 +163,63 @@ def dumpPayload(applicationPublicId, payload):
 	return
 
 def main():
+    
+    f = open('bcat_bcat-frontend.json',)
+	edata = json.load(f)
+
 	dumpEvaluation = True
 	countWaivers = 0
 
 	with open(applyWaiverCmds, 'w') as fd:
-		with open(existingWaiversCsv) as csvfile:
-			csvdata = csv.reader(csvfile, delimiter='\t')
-			for v in csvdata:
+    	evaluation = edata
+    
+		if dumpEvaluation:
+			dumpPayload(violation["applicationPublicId"], evaluation)
 
-				violation = {
-					"applicationPublicId": v[0],
-					"packageUrl": v[1],
-					"hash": v[2],
-					"policyName": v[3],
-					"cve": v[4],
-					"stage": v[5],
-					"comment": v[6],
-					"scopeName": v[7],
-					"scopeType": v[8],
-					"scopeTyId": v[9],
+		if  violation["cve"] == "no-cve":
+			print (" no-cve: " + violation["applicationPublicId"] + ":" + violation["packageUrl"] + ":" + violation["policyName"])
+			continue
 
-				}
+		policyViolationId = findViolation(evaluation, violation)
 
-				countWaivers += 1
-				print(str(countWaivers) + " checking for: " + violation["applicationPublicId"] + ":" + violation["packageUrl"] + ":" + violation["policyName"] + ". ", end='')
+		if policyViolationId == "waived":
+			print (" is waived")
+		else:
+			print (" writing waiver command")
+			waiverComd = getWaiverCmd(policyViolationId, violation)
+			fd.write(waiverComd)
+		# with open(existingWaiversCsv) as csvfile:
+		# 	csvdata = csv.reader(csvfile, delimiter='\t')
+		# 	for v in csvdata:
 
-				applicationId = getApplicationId(violation["applicationPublicId"])
+		# 		violation = {
+		# 			"applicationPublicId": v[0],
+		# 			"packageUrl": v[1],
+		# 			"hash": v[2],
+		# 			"policyName": v[3],
+		# 			"cve": v[4],
+		# 			"stage": v[5],
+		# 			"comment": v[6],
+		# 			"scopeName": v[7],
+		# 			"scopeType": v[8],
+		# 			"scopeTyId": v[9],
 
-				if (len(applicationId) > 0):
+		# 		}
 
-					applicationReportUrl = getApplicationReport(applicationId, violation["stage"])
-					evaluation = getEvaluationReport(applicationReportUrl)
+		# 		countWaivers += 1
+		# 		print(str(countWaivers) + " checking for: " + violation["applicationPublicId"] + ":" + violation["packageUrl"] + ":" + violation["policyName"] + ". ", end='')
 
-					if dumpEvaluation:
-						dumpPayload(violation["applicationPublicId"], evaluation)
+		# 		applicationId = getApplicationId(violation["applicationPublicId"])
 
-					if  violation["cve"] == "no-cve":
-						print (" no-cve: " + violation["applicationPublicId"] + ":" + violation["packageUrl"] + ":" + violation["policyName"])
-						continue
 
-					policyViolationId = findViolation(evaluation, violation)
+		# 		applicationReportUrl = getApplicationReport(applicationId, violation["stage"])
+		# 		evaluation = getEvaluationReport(applicationReportUrl)
 
-					if policyViolationId == "waived":
-						print (" is waived")
-					else:
-						print (" writing waiver command")
-						waiverComd = getWaiverCmd(policyViolationId, violation)
-						fd.write(waiverComd)
+				
 
-				else:
-					print (" application not found: " + violation["applicationPublicId"])
+				
 
-			print("\n")
+			# print("\n")
 
 
 if __name__ == '__main__':
