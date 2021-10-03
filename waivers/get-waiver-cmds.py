@@ -168,7 +168,7 @@ def getWaiverCmd(policyViolationId, violation):
 	elif scopeType == "organization":
 		cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: application/json' " + iqurl + "/api/v2/policyWaivers/organization/" + scopeOwnerId + "/" + policyViolationId + " -d '" + waiverComment + "}'\n"
 	else:
-		cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: text/plain; charset=UTF-8' " + iqurl + "/api/v2/policyWaiver/" + policyViolationId + waiverScopeName + " --data-binary '" + waiverComment + "'" + "\n"
+		cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: text/plain; charset=UTF-8' " + iqurl + "/api/v2/policyWaiver/" + policyViolationId + waiverScopeName + " -d '" + waiverComment + "}'" + "\n"
 		# cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: text/plain; charset=UTF-8' " + iqurl + "/api/v2/policyWaivers/application/" + scopeOwnerId + "/" + policyViolationId + " --data-binary '" + waiverComment + "'" + "\n"
 
 	return cmd
