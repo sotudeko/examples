@@ -133,7 +133,7 @@ def findViolation(evaluation, searchViolation):
 def getWaiverCmd(policyViolationId, violation):
 	applicationEndpoint = "/api/v2/policyWaivers/application/"
 	organizationEndpoint = "/api/v2/policyWaivers/organization/"
-	waiverComment = "adding waiver"
+	defaultComment = "adding waiver"
 	# endPoint = ""
 	ROOT_ORG = "ROOT_ORGANIZATION_ID"
 
@@ -145,6 +145,9 @@ def getWaiverCmd(policyViolationId, violation):
 
 	if not comment == "":
 		waiverComment = "{\"comment\":\"" + comment + "\""
+ 	else:
+     	waiverComment = "{\"comment\":\"" + defaultComment + "\""
+
 
 
 	if scopeType == "root_organization":
@@ -184,7 +187,7 @@ def dumpPayload(applicationPublicId, payload):
 	return
 
 def main():
-	dumpEvaluation = True
+	dumpEvaluation = False
 	countWaivers = 0
 
 	with open(applyWaiverCmds, 'w') as fd:
