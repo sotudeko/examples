@@ -151,9 +151,14 @@ def getWaiverCmd(policyViolationId, violation):
 
 
 def dumpPayload(applicationPublicId, payload):
-	print ("dumping evaluation json",end='')
-	with open(datadir + applicationPublicId + ".json", "w") as wfile:
-		json.dump(payload, wfile, indent=2)
+	payloadFile = datadir + applicationPublicId + ".json"
+
+	if os.path.exists(payloadFile):
+		print (payloadFile + ": file already exists. ",end='')
+	else:
+		print (" dumping evaluation json. ",end='')
+		with open(payloadFile, "w") as wfile:
+			json.dump(payload, wfile, indent=2)
 
 	return
 
@@ -181,7 +186,7 @@ def main():
 				}
 
 				countWaivers += 1
-				print(str(countWaivers) + " checking for: " + violation["applicationPublicId"], end = '')
+				print(str(countWaivers) + " checking for: " + violation["applicationPublicId"] + ":" + violation["packageUrl"] + ":" + violation["policyName"] + ". ", end='')
 
 				applicationId = getApplicationId(violation["applicationPublicId"])
 
@@ -200,15 +205,16 @@ def main():
 					policyViolationId = findViolation(evaluation, violation)
 
 					if policyViolationId == "waived":
-						print (" is waived",end='')
+						print (" is waived")
 					else:
+						print (" writing waiver command")
 						waiverComd = getWaiverCmd(policyViolationId, violation)
 						fd.write(waiverComd)
 
 				else:
 					print (" application not found: " + violation["applicationPublicId"])
 
-				print("\n")
+			print("\n")
 
 
 if __name__ == '__main__':
