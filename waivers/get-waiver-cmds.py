@@ -34,7 +34,7 @@ def getCVE(reason):
 	cve = "no-cve"
 	info = reason.split(' ')
 
-	if len(info) == 11:
+	if len(info) > 11:
 		cve = info[3]
 
 	return cve
