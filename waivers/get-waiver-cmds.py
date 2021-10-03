@@ -145,8 +145,8 @@ def getWaiverCmd(policyViolationId, violation):
 
 	if not comment == "":
 		waiverComment = "{\"comment\":\"" + comment + "\""
- 	else:
-     	waiverComment = "{\"comment\":\"" + defaultComment + "\""
+	else:
+		waiverComment = "{\"comment\":\"" + defaultComment + "\""
 
 
 
