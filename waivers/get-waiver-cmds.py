@@ -163,7 +163,7 @@ def dumpPayload(applicationPublicId, payload):
 	return
 
 def main():
-	dumpEvaluation = False
+	dumpEvaluation = True
 	countWaivers = 0
 
 	with open(applyWaiverCmds, 'w') as fd:

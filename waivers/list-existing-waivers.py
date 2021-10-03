@@ -69,9 +69,21 @@ def listWaivers(waivers):
 								vulnerabilityId = getCVE()
 
 							comment = waivedPolicyViolation["policyWaiver"]["comment"]
-							scopeOwnerName = waivedPolicyViolation["policyWaiver"]["scopeOwnerName"]
-							scopeOwnerType = waivedPolicyViolation["policyWaiver"]["scopeOwnerType"]
-							scopeOwnerId = waivedPolicyViolation["policyWaiver"]["scopeOwnerId"]
+
+							if "scopeOwnerName" in waivedPolicyViolation["policyWaiver"]:
+								scopeOwnerName = waivedPolicyViolation["policyWaiver"]["scopeOwnerName"]
+							else:
+								scopeOwnerName = "no-scope-name"
+
+							if "scopeOwnerType" in waivedPolicyViolation["policyWaiver"]:
+								scopeOwnerType = waivedPolicyViolation["policyWaiver"]["scopeOwnerType"]
+							else:
+								scopeOwnerType = "no-scope-type"
+
+							if "scopeOwnerId" in waivedPolicyViolation["policyWaiver"]:
+								scopeOwnerId = waivedPolicyViolation["policyWaiver"]["scopeOwnerId"]
+							else:
+								scopeOwnerId = "no-scope-id"
 
 							line = []
 							line.append(applicationPublicId)
