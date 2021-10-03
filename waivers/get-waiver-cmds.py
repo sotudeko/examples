@@ -9,9 +9,9 @@ iqurl = sys.argv[1]
 iquser = sys.argv[2]
 iqpwd = sys.argv[3]
 
-datadir = "datafiles"
-existingWaiversCsv = "{}/{}".format(datadir, "existingWaivers.csv")
-applyWaiverCmds = "{}/{}".format(datadir, "applyWaiversCmds.txt")
+datadir = "datafiles/"
+existingWaiversCsv = "{}{}".format(datadir, "existingWaivers.csv")
+applyWaiverCmds = "{}{}".format(datadir, "applyWaiversCmds.txt")
 
 def getNexusIqData(api):
 	url = "{}{}" . format(iqurl, api)
@@ -92,6 +92,11 @@ def findViolation(evaluation, searchViolation):
 			policyId = violation['policyId']
 			policyThreatCategory = violation['policyThreatCategory']
 			policyViolationId = violation['policyViolationId']
+			waived = violation['waived']
+
+			if waived:
+				foundPolicyViolationId = "waived"
+				break
 
 			cve = ""
 
@@ -141,14 +146,21 @@ def getWaiverCmd(policyViolationId, violation):
 		endPoint = applicationEndpoint
 		waiverScopeName = scopeName
 
-
 	cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H \"Content-Type: application/json\" -d " + "'{\"comment\": \"" + waiverComment + "\"}' " + iqurl + endPoint + waiverScopeName + "/" + policyViolationId + "\n"
 	return cmd
 
 
-def main():
+def dumpPayload(applicationPublicId, payload):
+	print ("dumping evaluation json",end='')
+	with open(datadir + applicationPublicId + ".json", "w") as wfile:
+		json.dump(payload, wfile, indent=2)
 
+	return
+
+def main():
+	dumpEvaluation = False
 	countWaivers = 0
+
 	with open(applyWaiverCmds, 'w') as fd:
 		with open(existingWaiversCsv) as csvfile:
 			csvdata = csv.reader(csvfile, delimiter='\t')
@@ -167,22 +179,36 @@ def main():
 					"scopeTyId": v[9],
 
 				}
+
 				countWaivers += 1
-				print(str(countWaivers) + " checking for: " + violation["applicationPublicId"])
+				print(str(countWaivers) + " checking for: " + violation["applicationPublicId"], end = '')
 
 				applicationId = getApplicationId(violation["applicationPublicId"])
 
 				if (len(applicationId) > 0):
+
 					applicationReportUrl = getApplicationReport(applicationId, violation["stage"])
 					evaluation = getEvaluationReport(applicationReportUrl)
-					policyViolationId = findViolation(evaluation, violation)
+
+					if dumpEvaluation:
+						dumpPayload(violation["applicationPublicId"], evaluation)
 
 					if  violation["cve"] == "no-cve":
-						print ("no-cve: " + violation["applicationPublicId"] + ":" + violation["packageUrl"] + ":" + violation["policyName"])
+						print (" no-cve: " + violation["applicationPublicId"] + ":" + violation["packageUrl"] + ":" + violation["policyName"])
 						continue
 
-					waiverComd = getWaiverCmd(policyViolationId, violation)
-					fd.write(waiverComd)
+					policyViolationId = findViolation(evaluation, violation)
+
+					if policyViolationId == "waived":
+						print (" is waived",end='')
+					else:
+						waiverComd = getWaiverCmd(policyViolationId, violation)
+						fd.write(waiverComd)
+
+				else:
+					print (" application not found: " + violation["applicationPublicId"])
+
+				print("\n")
 
 
 if __name__ == '__main__':
