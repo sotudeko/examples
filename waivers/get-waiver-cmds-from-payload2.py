@@ -5,13 +5,9 @@ import os.path
 import sys
 import csv
 
-# iqurl = sys.argv[1]
-# iquser = sys.argv[2]
-# iqpwd = sys.argv[3]
-
-iqurl = "http://localhost:8070"
-iquser = "admin"
-iqpwd = "admin123"
+iqurl = sys.argv[1]
+iquser = sys.argv[2]
+iqpwd = sys.argv[3]
 
 datadir = "datafiles/"
 existingWaiversCsv = "{}{}".format(datadir, "existingWaivers.csv")
@@ -97,8 +93,7 @@ def findViolation(evaluation, searchViolation):
 			policyThreatCategory = violation['policyThreatCategory']
 			policyViolationId = violation['policyViolationId']
 			waived = violation['waived']
-			# foundPolicyViolationId = policyViolationId
-
+			foundPolicyViolationId = policyViolationId
 			# if waived == "true":
 			# 	foundPolicyViolationId = "waived"
 			# 	break
@@ -156,9 +151,9 @@ def getWaiverCmd(policyViolationId, violation):
 	                   # curl -u admin:admin123 -X POST -H "Content-Type: text/plain; charset=UTF-8" http://nexus-iq-server.sonatype.com:8070/api/v2/policyWaiver/81513a08599a4d399528c6184f0a9200/application --data-binary 'waiver comment (optional)'
 	
 	if scopeType == "root_organization":
-		cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: application/json' " + iqurl + "/api/v2/policyWaivers/organization/" + ROOT_ORG + "/" + policyViolationId + " --data-binary '" + waiverComment + "'" + "\n"
+		cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: text/plain; charset=UTF-8' " + iqurl + "/api/v2/policyWaivers/organization/" + ROOT_ORG + "/" + policyViolationId + " --data-binary '" + waiverComment + "'" + "\n"
 	elif scopeType == "organization":
-		cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: applicattion/json' " + iqurl + "/api/v2/policyWaivers/organization/" + scopeOwnerId + "/" + policyViolationId + " --data-binary '" + waiverComment + "'" + "\n"
+		cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: text/plain; charset=UTF-8' " + iqurl + "/api/v2/policyWaivers/organization/" + scopeOwnerId + "/" + policyViolationId + " --data-binary '" + waiverComment + "'" + "\n"
 	else:
 		cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: text/plain; charset=UTF-8' " + iqurl + "/api/v2/policyWaiver/" + policyViolationId + waiverScopeName + " --data-binary '" + waiverComment + "'" + "\n"
 		# cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: text/plain; charset=UTF-8' " + iqurl + "/api/v2/policyWaivers/application/" + scopeOwnerId + "/" + policyViolationId + " --data-binary '" + waiverComment + "'" + "\n"
@@ -179,11 +174,14 @@ def dumpPayload(applicationPublicId, payload):
 	return
 
 def main():
+	f = open("bcat_bcat-frontend.json")
+	bcatEvaluation = json.load(f)
+
 	dumpEvaluation = True
 	countWaivers = 0
 
 	with open(applyWaiverCmds, 'w') as fd:
-		with open(existingWaiversCsv) as csvfile:
+		with open("bcat_existingWaivers.csv") as csvfile:
 			csvdata = csv.reader(csvfile, delimiter='\t')
 			for v in csvdata:
 
@@ -204,12 +202,15 @@ def main():
 				countWaivers += 1
 				print(str(countWaivers) + " checking for: " + violation["applicationPublicId"] + ":" + violation["packageUrl"] + ":" + violation["policyName"] + ". ", end='')
 
-				applicationId = getApplicationId(violation["applicationPublicId"])
+
+				# applicationId = getApplicationId(violation["applicationPublicId"])
+				applicationId = "bcat"
 
 				if (len(applicationId) > 0):
 
-					applicationReportUrl = getApplicationReport(applicationId, violation["stage"])
-					evaluation = getEvaluationReport(applicationReportUrl)
+					# applicationReportUrl = getApplicationReport(applicationId, violation["stage"])
+					# evaluation = getEvaluationReport(applicationReportUrl)
+					evaluation = bcatEvaluation
 
 					if dumpEvaluation:
 						dumpPayload(violation["applicationPublicId"], evaluation)
