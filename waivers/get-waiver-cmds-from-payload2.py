@@ -121,6 +121,9 @@ def findViolation(evaluation, searchViolation):
 	return foundPolicyViolationId
 
 
+
+
+
 def getWaiverCmd(policyViolationId, violation):
 	applicationEndpoint = "/api/v2/policyWaivers/application/"
 	organizationEndpoint = "/api/v2/policyWaivers/organization/"
@@ -135,7 +138,8 @@ def getWaiverCmd(policyViolationId, violation):
 	scopeOwnerId = violation["scopeOwnerId"]
 
 	if not comment == "":
-		waiverComment = comment
+		waiverComment = "{\"comment\":\"" + comment + "\""
+
 
 	if scopeType == "root_organization":
 		# endPoint = organizationEndpoint
@@ -151,9 +155,9 @@ def getWaiverCmd(policyViolationId, violation):
 	                   # curl -u admin:admin123 -X POST -H "Content-Type: text/plain; charset=UTF-8" http://nexus-iq-server.sonatype.com:8070/api/v2/policyWaiver/81513a08599a4d399528c6184f0a9200/application --data-binary 'waiver comment (optional)'
 	
 	if scopeType == "root_organization":
-		cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: text/plain; charset=UTF-8' " + iqurl + "/api/v2/policyWaivers/organization/" + ROOT_ORG + "/" + policyViolationId + " --data-binary '" + waiverComment + "'" + "\n"
+		cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: application/json' " + iqurl + "/api/v2/policyWaivers/organization/" + ROOT_ORG + "/" + policyViolationId + " -d '" + waiverComment + "}'\n"
 	elif scopeType == "organization":
-		cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: text/plain; charset=UTF-8' " + iqurl + "/api/v2/policyWaivers/organization/" + scopeOwnerId + "/" + policyViolationId + " --data-binary '" + waiverComment + "'" + "\n"
+		cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: application/json' " + iqurl + "/api/v2/policyWaivers/organization/" + scopeOwnerId + "/" + policyViolationId + " -d '" + waiverComment + "}'\n"
 	else:
 		cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: text/plain; charset=UTF-8' " + iqurl + "/api/v2/policyWaiver/" + policyViolationId + waiverScopeName + " --data-binary '" + waiverComment + "'" + "\n"
 		# cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: text/plain; charset=UTF-8' " + iqurl + "/api/v2/policyWaivers/application/" + scopeOwnerId + "/" + policyViolationId + " --data-binary '" + waiverComment + "'" + "\n"

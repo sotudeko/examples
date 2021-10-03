@@ -103,6 +103,10 @@ def findViolation(evaluation, searchViolation):
 			# 	foundPolicyViolationId = "waived"
 			# 	break
 
+			if waived:
+				foundPolicyViolationId = "waived"
+				break
+
 			cve = ""
 
 			if  policyThreatCategory == "SECURITY":
@@ -221,16 +225,12 @@ def main():
 
 					policyViolationId = findViolation(evaluation, violation)
 
-					# if policyViolationId == "waived":
-					# 	print (" is waived")
-					# else:
-					# 	print (" writing waiver command")
-					# 	waiverComd = getWaiverCmd(policyViolationId, violation)
-					# 	fd.write(waiverComd)
-
-					print (" writing waiver command")
-					waiverComd = getWaiverCmd(policyViolationId, violation)
-					fd.write(waiverComd)
+					if policyViolationId == "waived":
+						print (" is waived")
+					else:
+						print (" writing waiver command")
+						waiverComd = getWaiverCmd(policyViolationId, violation)
+						fd.write(waiverComd)
 
 				else:
 					print (" application not found: " + violation["applicationPublicId"])
