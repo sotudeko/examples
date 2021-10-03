@@ -97,15 +97,14 @@ def findViolation(evaluation, searchViolation):
 			policyThreatCategory = violation['policyThreatCategory']
 			policyViolationId = violation['policyViolationId']
 			waived = violation['waived']
-			# foundPolicyViolationId = policyViolationId
-
-			if waived == "true":
-				foundPolicyViolationId = "waived"
-				break
-
-			# if waived:
+   
+			# if waived == "true":
 			# 	foundPolicyViolationId = "waived"
 			# 	break
+
+			if waived:
+				foundPolicyViolationId = "waived"
+				break
 
 			cve = ""
 
@@ -128,7 +127,7 @@ def findViolation(evaluation, searchViolation):
 								# print (applicationName + " " + packageUrl + " " + policyName + " " + cve + "\n")
 						foundPolicyViolationId = policyViolationId
 						break
-
+  
 	return foundPolicyViolationId
 
 
