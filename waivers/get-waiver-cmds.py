@@ -94,7 +94,7 @@ def findViolation(evaluation, searchViolation):
 			policyViolationId = violation['policyViolationId']
 			waived = violation['waived']
 
-			if waived:
+			if waived == "true":
 				foundPolicyViolationId = "waived"
 				break
 
@@ -138,7 +138,7 @@ def getWaiverCmd(policyViolationId, violation):
 
 	if scopeType == "root_organization":
 		# endPoint = organizationEndpoint
-		waiverScopeName = "/organization"
+		waiverScopeName = ROOT_ORG
 	elif scopeType == "organization":
 		# endPoint = organizationEndpoint
 		waiverScopeName = "/organization"
@@ -148,7 +148,7 @@ def getWaiverCmd(policyViolationId, violation):
 
 	# cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H \"Content-Type: application/json\" -d " + "'{\"comment\": \"" + waiverComment + "\"}' " + iqurl + endPoint + waiverScopeName + "/" + policyViolationId + "\n"
 	                   # curl -u admin:admin123 -X POST -H "Content-Type: text/plain; charset=UTF-8" http://nexus-iq-server.sonatype.com:8070/api/v2/policyWaiver/81513a08599a4d399528c6184f0a9200/application --data-binary 'waiver comment (optional)'
-	cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: text/plain; charset=UTF-8' " + iqurl + "/api/v2/policyWaiver/" + policyViolationId + waiverScopeName + " --data-binary '" + waiverComment + "'"
+	cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: text/plain; charset=UTF-8' " + iqurl + "/api/v2/policyWaiver/" + policyViolationId + waiverScopeName + " --data-binary '" + waiverComment + "'" + "\n"
 	return cmd
 
 
@@ -165,7 +165,7 @@ def dumpPayload(applicationPublicId, payload):
 	return
 
 def main():
-	dumpEvaluation = True
+	dumpEvaluation = False
 	countWaivers = 0
 
 	with open(applyWaiverCmds, 'w') as fd:
