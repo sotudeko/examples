@@ -117,13 +117,17 @@ def findViolation(evaluation, searchViolation):
 					for condition in conditions:
 						reason = condition['conditionReason']
 						cve = getCVE(reason)
+      
 
-					if applicationName == searchViolation["applicationPublicId"] and packageUrl == searchViolation["packageUrl"] and policyName == searchViolation["policyName"] and cve == searchViolation["cve"]:
-						# use these fields to find the policyViolationId we need (captured above)
-						# if all 4 match fields in searchViolation we have our policyViolationId
-						# for the apply waiver API we need applicationPublicId, policyViolationId
-						# print (applicationName + " " + packageUrl + " " + policyName + " " + cve + "\n")
-						foundPolicyViolationId = policyViolationId
+						if cve == "no-cve":
+							break
+   
+						if applicationName == searchViolation["applicationPublicId"] and packageUrl == searchViolation["packageUrl"] and policyName == searchViolation["policyName"] and cve == searchViolation["cve"]:
+								# use these fields to find the policyViolationId we need (captured above)
+								# if all 4 match fields in searchViolation we have our policyViolationId
+								# for the apply waiver API we need applicationPublicId, policyViolationId
+								# print (applicationName + " " + packageUrl + " " + policyName + " " + cve + "\n")
+							foundPolicyViolationId = policyViolationId
 						break
 
 
@@ -168,9 +172,9 @@ def getWaiverCmd(policyViolationId, violation):
 	elif scopeType == "organization":
 		cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: application/json' " + iqurl + "/api/v2/policyWaivers/organization/" + scopeOwnerId + "/" + policyViolationId + " -d '" + waiverComment + "}'\n"
 	else:
-		cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: text/plain; charset=UTF-8' " + iqurl + "/api/v2/policyWaiver/" + policyViolationId + waiverScopeName + " -d '" + waiverComment + "}'" + "\n"
+		#cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: text/plain; charset=UTF-8' " + iqurl + "/api/v2/policyWaiver/" + policyViolationId + waiverScopeName + " -d '" + waiverComment + "}'" + "\n"
 		# cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: text/plain; charset=UTF-8' " + iqurl + "/api/v2/policyWaivers/application/" + scopeOwnerId + "/" + policyViolationId + " --data-binary '" + waiverComment + "'" + "\n"
-
+		cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: text/plain; charset=UTF-8' " + iqurl + "/api/v2/policyWaiver/" + policyViolationId + waiverScopeName + " -d '" + comment + "'" + "\n"
 	return cmd
 
 
