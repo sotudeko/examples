@@ -133,7 +133,6 @@ def getWaiverCmd(policyViolationId, violation):
 	scopeType = violation["scopeType"]
 	scopeName = violation["scopeName"]
 	scopeOwnerId = violation["scopeOwnerId"]
-	print(violation)
 
 	if not comment == "":
 		waiverComment = comment
@@ -193,7 +192,7 @@ def main():
 					"comment": v[6],
 					"scopeName": v[7],
 					"scopeType": v[8],
-					"scopeTyId": v[9],
+					"scopeOwnerId": v[9],
 
 				}
 
