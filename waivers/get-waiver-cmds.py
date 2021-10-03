@@ -94,9 +94,9 @@ def findViolation(evaluation, searchViolation):
 			policyViolationId = violation['policyViolationId']
 			waived = violation['waived']
 
-			if waived == "true":
-				foundPolicyViolationId = "waived"
-				break
+			# if waived == "true":
+			# 	foundPolicyViolationId = "waived"
+			# 	break
 
 			cve = ""
 
@@ -132,6 +132,8 @@ def getWaiverCmd(policyViolationId, violation):
 	comment = violation["comment"]
 	scopeType = violation["scopeType"]
 	scopeName = violation["scopeName"]
+	scopeOwnerId = violation["scopeOwnerId"]
+	print(violation)
 
 	if not comment == "":
 		waiverComment = comment
@@ -141,14 +143,22 @@ def getWaiverCmd(policyViolationId, violation):
 		waiverScopeName = ROOT_ORG
 	elif scopeType == "organization":
 		# endPoint = organizationEndpoint
-		waiverScopeName = "/organization"
+		waiverScopeName = scopeOwnerId
 	else:
 		# endPoint = applicationEndpoint
 		waiverScopeName = "/application"
 
 	# cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H \"Content-Type: application/json\" -d " + "'{\"comment\": \"" + waiverComment + "\"}' " + iqurl + endPoint + waiverScopeName + "/" + policyViolationId + "\n"
 	                   # curl -u admin:admin123 -X POST -H "Content-Type: text/plain; charset=UTF-8" http://nexus-iq-server.sonatype.com:8070/api/v2/policyWaiver/81513a08599a4d399528c6184f0a9200/application --data-binary 'waiver comment (optional)'
-	cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: text/plain; charset=UTF-8' " + iqurl + "/api/v2/policyWaiver/" + policyViolationId + waiverScopeName + " --data-binary '" + waiverComment + "'" + "\n"
+	
+	if scopeType == "root_organization":
+		cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: text/plain; charset=UTF-8' " + iqurl + "/api/v2/policyWaivers/organization/" + ROOT_ORG + "/" + policyViolationId + " --data-binary '" + waiverComment + "'" + "\n"
+	elif scopeType == "organization":
+		cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: text/plain; charset=UTF-8' " + iqurl + "/api/v2/policyWaivers/organization/" + scopeOwnerId + "/" + policyViolationId + " --data-binary '" + waiverComment + "'" + "\n"
+	else:
+		cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: text/plain; charset=UTF-8' " + iqurl + "/api/v2/policyWaiver/" + policyViolationId + waiverScopeName + " --data-binary '" + waiverComment + "'" + "\n"
+		# cmd = "curl -u " + iquser + ":" + iqpwd + " -X POST -H 'Content-Type: text/plain; charset=UTF-8' " + iqurl + "/api/v2/policyWaivers/application/" + scopeOwnerId + "/" + policyViolationId + " --data-binary '" + waiverComment + "'" + "\n"
+
 	return cmd
 
 
@@ -165,7 +175,7 @@ def dumpPayload(applicationPublicId, payload):
 	return
 
 def main():
-	dumpEvaluation = False
+	dumpEvaluation = True
 	countWaivers = 0
 
 	with open(applyWaiverCmds, 'w') as fd:
@@ -206,12 +216,16 @@ def main():
 
 					policyViolationId = findViolation(evaluation, violation)
 
-					if policyViolationId == "waived":
-						print (" is waived")
-					else:
-						print (" writing waiver command")
-						waiverComd = getWaiverCmd(policyViolationId, violation)
-						fd.write(waiverComd)
+					# if policyViolationId == "waived":
+					# 	print (" is waived")
+					# else:
+					# 	print (" writing waiver command")
+					# 	waiverComd = getWaiverCmd(policyViolationId, violation)
+					# 	fd.write(waiverComd)
+
+					print (" writing waiver command")
+					waiverComd = getWaiverCmd(policyViolationId, violation)
+					fd.write(waiverComd)
 
 				else:
 					print (" application not found: " + violation["applicationPublicId"])
