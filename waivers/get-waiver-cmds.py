@@ -99,13 +99,13 @@ def findViolation(evaluation, searchViolation):
 			waived = violation['waived']
 			# foundPolicyViolationId = policyViolationId
 
-			# if waived == "true":
-			# 	foundPolicyViolationId = "waived"
-			# 	break
-
-			if waived:
+			if waived == "true":
 				foundPolicyViolationId = "waived"
 				break
+
+			# if waived:
+			# 	foundPolicyViolationId = "waived"
+			# 	break
 
 			cve = ""
 
@@ -184,7 +184,7 @@ def dumpPayload(applicationPublicId, payload):
 	return
 
 def main():
-	dumpEvaluation = False
+	dumpEvaluation = True
 	countWaivers = 0
 
 	with open(applyWaiverCmds, 'w') as fd:
