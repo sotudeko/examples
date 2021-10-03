@@ -63,7 +63,7 @@ def listWaivers(waivers):
 						for waivedPolicyViolation in waivedPolicyViolations:
 							policyName = waivedPolicyViolation["policyName"]
 
-							if "vulnerabilityId" in waivedPolicyViolation["policyWaiver"].keys():
+							if "vulnerabilityId" in waivedPolicyViolation["policyWaiver"]:
 								vulnerabilityId = waivedPolicyViolation["policyWaiver"]["vulnerabilityId"]
 							else:
 								vulnerabilityId = getCVE()
