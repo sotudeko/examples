@@ -19,14 +19,14 @@ applyWaiverCmds = "{}{}".format(datadir, "applyWaiversCmds.txt")
 
 def getNexusIqData(api):
 	url = "{}{}" . format(iqurl, api)
+	#print(url)
 
 	req = requests.get(url, auth=(iquser, iqpwd), verify=False)
-
-	if req.status_code == 200:
+	if req.status_code == 200 and len(req.content) != 0:
 		res = req.json()
 	else:
 		res = "Error fetching data"
-
+		
 	return res
 
 
@@ -44,6 +44,7 @@ def getApplicationId(applicationPublicName):
 	applicationId = ""
 
 	endPoint = "{}{}" . format("/api/v2/applications?publicId=", applicationPublicName)
+	#print (endPoint)
 	applicationData = getNexusIqData(endPoint)
 
 	if applicationData["applications"]:
@@ -70,7 +71,8 @@ def getApplicationReport(applicationId, findStage):
 
 def getEvaluationReport(applicationReportUrl):
 	reportsData = getNexusIqData("/" + applicationReportUrl)
-	return reportsData
+	if (len(reportsData) != 0): #Sri
+		return reportsData
 
 
 def findViolation(evaluation, searchViolation):
@@ -102,10 +104,6 @@ def findViolation(evaluation, searchViolation):
 			# 	foundPolicyViolationId = "waived"
 			# 	break
 
-			if waived:
-				foundPolicyViolationId = "waived"
-				break
-
 			cve = ""
 
 			if  policyThreatCategory == "SECURITY":
@@ -126,6 +124,9 @@ def findViolation(evaluation, searchViolation):
 								# for the apply waiver API we need applicationPublicId, policyViolationId
 								# print (applicationName + " " + packageUrl + " " + policyName + " " + cve + "\n")
 						foundPolicyViolationId = policyViolationId
+						if waived:
+							foundPolicyViolationId = "waived"
+							#break
 						break
   
 	return foundPolicyViolationId
@@ -207,7 +208,6 @@ def main():
 					"scopeName": v[7],
 					"scopeType": v[8],
 					"scopeOwnerId": v[9],
-
 				}
 
 				countWaivers += 1
@@ -218,7 +218,11 @@ def main():
 				if (len(applicationId) > 0):
 
 					applicationReportUrl = getApplicationReport(applicationId, violation["stage"])
-					evaluation = getEvaluationReport(applicationReportUrl)
+					if applicationReportUrl:
+						evaluation = getEvaluationReport(applicationReportUrl)
+					else:
+						print("No reports found for " + violation["applicationPublicId"])
+						continue
 
 					if dumpEvaluation:
 						dumpPayload(violation["applicationPublicId"], evaluation)
@@ -231,6 +235,8 @@ def main():
 
 					if policyViolationId == "waived":
 						print (" is waived")
+					elif not policyViolationId:
+						print ("is not found")
 					else:
 						print (" writing waiver command")
 						waiverComd = getWaiverCmd(policyViolationId, violation)
@@ -244,3 +250,4 @@ def main():
 
 if __name__ == '__main__':
 	main()
+
