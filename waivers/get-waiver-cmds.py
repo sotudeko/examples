@@ -19,10 +19,9 @@ applyWaiverCmds = "{}{}".format(datadir, "applyWaiversCmds.txt")
 
 def getNexusIqData(api):
 	url = "{}{}" . format(iqurl, api)
-	#print(url)
 
 	req = requests.get(url, auth=(iquser, iqpwd), verify=False)
-	if req.status_code == 200 and len(req.content) != 0:
+	if req.status_code == 200:
 		res = req.json()
 	else:
 		res = "Error fetching data"
