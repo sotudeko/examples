@@ -21,11 +21,11 @@ def getNexusIqData(api):
 	url = "{}{}" . format(iqurl, api)
 
 	req = requests.get(url, auth=(iquser, iqpwd), verify=False)
+	
 	if req.status_code == 200:
 		res = req.json()
 	else:
-		res = "Error fetching data"
-		
+		res = "Error fetching data"	
 	return res
 
 
@@ -43,7 +43,7 @@ def getApplicationId(applicationPublicName):
 	applicationId = ""
 
 	endPoint = "{}{}" . format("/api/v2/applications?publicId=", applicationPublicName)
-	#print (endPoint)
+
 	applicationData = getNexusIqData(endPoint)
 
 	if applicationData["applications"]:
@@ -70,8 +70,7 @@ def getApplicationReport(applicationId, findStage):
 
 def getEvaluationReport(applicationReportUrl):
 	reportsData = getNexusIqData("/" + applicationReportUrl)
-	if (len(reportsData) != 0): #Sri
-		return reportsData
+	return reportsData
 
 
 def findViolation(evaluation, searchViolation):
