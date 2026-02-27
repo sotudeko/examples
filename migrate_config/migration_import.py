@@ -9,13 +9,6 @@ TARGET_URL = "http://localhost:8077"
 AUTH = HTTPBasicAuth("admin", "admin123")
 DATA_DIR = "./migration_data/orgs"
 
-# Your server's strictly supported colors
-SUPPORTED_COLORS = [
-    "light-red", "light-green", "light-blue", "light-purple",
-    "dark-red", "dark-green", "dark-blue", "dark-purple",
-    "orange", "yellow"
-]
-
 def clean(text):
     return " ".join(text.split()).strip() if text else ""
 
@@ -23,14 +16,19 @@ def get_data(url):
     res = requests.get(url, auth=AUTH)
     return res.json() if res.status_code == 200 else None
 
-def get_tag_map(org_id):
+def get_tag_id_on_the_fly(org_id, tag_name):
     raw_t = get_data(f"{TARGET_URL}/api/v2/applicationCategories/organization/{org_id}")
-    if not raw_t: return {}
+    if not raw_t: return None
     t_list = raw_t if isinstance(raw_t, list) else (raw_t.get("categories", []) if raw_t else [])
-    return {clean(t['name']).lower(): t['id'] for t in t_list}
+    
+    normalized_target = clean(tag_name).lower()
+    for t in t_list:
+        if clean(t['name']).lower() == normalized_target:
+            return t['id']
+    return None
 
 def main():
-    print("--- STARTING PALETTE-AWARE IMPORT ---")
+    print("--- STARTING FULL-OBJECT PUT IMPORT ---")
     
     orgs_payload = get_data(f"{TARGET_URL}/api/v2/organizations")
     if not orgs_payload:
@@ -47,6 +45,7 @@ def main():
         
         print(f"\nProcessing Org: {o_name}")
         
+        # 1. Sync Org
         if o_name not in target_orgs:
             res = requests.post(f"{TARGET_URL}/api/v2/organizations", auth=AUTH, json={"name": o_name})
             target_org_id = res.json()['id']
@@ -54,63 +53,51 @@ def main():
         else:
             target_org_id = target_orgs[o_name]
 
-        # 1. CREATE TAGS WITH VALID COLORS
+        # 2. Sync Tags
         for t_req in org_data.get('tags', []):
             t_name = t_req['name']
-            
-            current_map = get_tag_map(target_org_id)
-            if clean(t_name).lower() not in current_map:
-                # Check if the exported color is supported, else use light-blue
-                exported_color = t_req.get('color', '').lower()
-                final_color = exported_color if exported_color in SUPPORTED_COLORS else "light-blue"
-                
-                print(f"  Creating tag '{t_name}' with color '{final_color}'...")
-                
-                payload = {
-                    "name": t_name,
-                    "description": f"Migrated: {t_name}",
-                    "color": final_color
-                }
-                
-                res = requests.post(
-                    f"{TARGET_URL}/api/v2/applicationCategories/organization/{target_org_id}", 
-                    auth=AUTH, 
-                    json=payload
-                )
-                
-                if res.status_code not in [200, 201, 204]:
-                    print(f"  FAILED: ({res.status_code}) {res.text}")
-            else:
-                print(f"  Tag '{t_name}' already exists.")
+            if not get_tag_id_on_the_fly(target_org_id, t_name):
+                print(f"  Creating tag: {t_name}")
+                requests.post(f"{TARGET_URL}/api/v2/applicationCategories/organization/{target_org_id}", 
+                              auth=AUTH, json={"name": t_name, "color": "light-blue"})
 
-        # 2. REFRESH MAP & LINK
-        active_map = get_tag_map(target_org_id)
-
-        for app in org_data.get('apps', []):
-            app_name, app_pid = app['name'], app['publicId']
+        # 3. Sync Applications
+        for app_export in org_data.get('apps', []):
+            app_name, app_pid = app_export['name'], app_export['publicId']
             
-            find_app = get_data(f"{TARGET_URL}/api/v2/applications?publicId={app_pid}")
-            apps_found = find_app.get("applications", []) if find_app else []
+            # Fetch existing app object from Target
+            search_res = get_data(f"{TARGET_URL}/api/v2/applications?publicId={app_pid}")
+            apps_found = search_res.get("applications", []) if search_res else []
             
             if not apps_found:
+                print(f"    Creating App: {app_name}")
                 res = requests.post(f"{TARGET_URL}/api/v2/applications", auth=AUTH, 
                                     json={"publicId": app_pid, "name": app_name, "organizationId": target_org_id})
-                app_id = res.json()['id']
+                app_obj = res.json()
             else:
-                app_id = apps_found[0]['id']
+                app_obj = apps_found[0]
 
-            applied = 0
-            for req_tag_name in app.get('tags', []):
-                lookup = clean(req_tag_name).lower()
-                if lookup in active_map:
-                    t_id = active_map[lookup]
-                    requests.post(f"{TARGET_URL}/api/v2/applicationCategories/application/{app_id}/{t_id}", auth=AUTH)
-                    applied += 1
+            # 4. CONSTRUCT THE PUT BODY
+            # We need the full object to avoid 400 errors
+            tag_payload = []
+            for t_name in app_export.get('tags', []):
+                t_id = get_tag_id_on_the_fly(target_org_id, t_name)
+                if t_id:
+                    tag_payload.append({"tagId": t_id})
+
+            # Update the object with new tags
+            app_obj['applicationTags'] = tag_payload
             
-            if len(app.get('tags', [])) > 0:
-                print(f"    - {app_name}: Linked {applied}/{len(app.get('tags', []))} tags.")
+            # Perform the PUT to the specific app ID
+            put_url = f"{TARGET_URL}/api/v2/applications/{app_obj['id']}"
+            put_res = requests.put(put_url, auth=AUTH, json=app_obj)
+
+            if put_res.status_code in [200, 204]:
+                print(f"    - {app_name}: Successfully assigned {len(tag_payload)} tags.")
+            else:
+                print(f"    - {app_name}: FAILED assignment. Status: {put_res.status_code}")
+                print(f"      Response: {put_res.text}")
 
 if __name__ == "__main__":
     main()
-
     
