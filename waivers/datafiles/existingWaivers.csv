@@ -1,0 +1,5 @@
+producerapp	pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.11.2?type=jar	ee08bbd8975dde844307	Security-High	CVE-2020-36518	build		producerapp	application	72b3ec35bf7b47799b321dae077241cc
+producerapp	pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.11.2?type=jar	ee08bbd8975dde844307	Security-High	CVE-2022-42003	build		producerapp	application	72b3ec35bf7b47799b321dae077241cc
+producerapp	pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.11.2?type=jar	ee08bbd8975dde844307	Security-High	CVE-2022-42004	build		producerapp	application	72b3ec35bf7b47799b321dae077241cc
+producerapp	pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.11.2?type=jar	ee08bbd8975dde844307	Security-High	sonatype-2021-4682	build		producerapp	application	72b3ec35bf7b47799b321dae077241cc
+webgoat	pkg:maven/com.h2database/h2@1.4.187?type=jar	f6b109788d1964304583	Security-Medium	sonatype-2018-0863	build		webgoat	application	3435fb65e3f644f0b1f5724e4921fef3

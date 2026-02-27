@@ -1,0 +1,455 @@
+{
+  "applicationWaivers": [
+    {
+      "application": {
+        "id": "72b3ec35bf7b47799b321dae077241cc",
+        "publicId": "producerapp",
+        "name": "producerapp",
+        "organizationId": "559627f756254c4886cc50a7e4ad8c4c",
+        "contactUserName": null
+      },
+      "stages": [
+        {
+          "stageId": "build",
+          "componentPolicyViolations": [
+            {
+              "component": {
+                "packageUrl": "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.11.2?type=jar",
+                "hash": "ee08bbd8975dde844307",
+                "componentIdentifier": {
+                  "format": "maven",
+                  "coordinates": {
+                    "artifactId": "jackson-databind",
+                    "classifier": "",
+                    "extension": "jar",
+                    "groupId": "com.fasterxml.jackson.core",
+                    "version": "2.11.2"
+                  }
+                },
+                "displayName": "com.fasterxml.jackson.core : jackson-databind : 2.11.2"
+              },
+              "waivedPolicyViolations": [
+                {
+                  "policyId": "e637ee9396a24ac8b5cfd39b430d121d",
+                  "policyName": "Security-High",
+                  "policyViolationId": "7059b77589874fde965aa82ab9750a9a",
+                  "threatLevel": 9,
+                  "constraintViolations": [
+                    {
+                      "constraintId": "f44ab923c6554eeaabeb36a44948c6bd",
+                      "constraintName": "High risk CVSS score",
+                      "reasons": [
+                        {
+                          "reason": "Found security vulnerability CVE-2020-36518 with severity >= 7 (severity = 7.5)",
+                          "reference": {
+                            "type": "SECURITY_VULNERABILITY_REFID",
+                            "value": "CVE-2020-36518"
+                          }
+                        },
+                        {
+                          "reason": "Found security vulnerability CVE-2020-36518 with severity < 9 (severity = 7.5)",
+                          "reference": {
+                            "type": "SECURITY_VULNERABILITY_REFID",
+                            "value": "CVE-2020-36518"
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "policyWaiver": {
+                    "policyWaiverId": "0a2df1897ed4455bbe2ad496567bbba4",
+                    "comment": "",
+                    "createTime": "2024-10-02T09:02:40.820+0000",
+                    "isObsolete": false,
+                    "scopeOwnerType": "application",
+                    "scopeOwnerId": "72b3ec35bf7b47799b321dae077241cc",
+                    "scopeOwnerName": "producerapp",
+                    "hash": "ee08bbd8975dde844307",
+                    "policyId": "e637ee9396a24ac8b5cfd39b430d121d",
+                    "vulnerabilityId": "CVE-2020-36518",
+                    "creatorId": "admin",
+                    "creatorName": "Admin BuiltIn",
+                    "matcherStrategy": "EXACT_COMPONENT",
+                    "associatedPackageUrl": "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.11.2?type=jar",
+                    "componentIdentifier": {
+                      "format": "maven",
+                      "coordinates": {
+                        "artifactId": "jackson-databind",
+                        "extension": "jar",
+                        "groupId": "com.fasterxml.jackson.core",
+                        "version": "2.11.2"
+                      }
+                    },
+                    "displayName": {
+                      "parts": [
+                        {
+                          "field": "Group",
+                          "value": "com.fasterxml.jackson.core"
+                        },
+                        {
+                          "value": " : "
+                        },
+                        {
+                          "field": "Artifact",
+                          "value": "jackson-databind"
+                        },
+                        {
+                          "value": " : "
+                        },
+                        {
+                          "field": "Version",
+                          "value": "2.11.2"
+                        }
+                      ],
+                      "name": "jackson-databind"
+                    }
+                  }
+                },
+                {
+                  "policyId": "e637ee9396a24ac8b5cfd39b430d121d",
+                  "policyName": "Security-High",
+                  "policyViolationId": "d3dee1cf448f4d7da3e62a7cdf739430",
+                  "threatLevel": 9,
+                  "constraintViolations": [
+                    {
+                      "constraintId": "f44ab923c6554eeaabeb36a44948c6bd",
+                      "constraintName": "High risk CVSS score",
+                      "reasons": [
+                        {
+                          "reason": "Found security vulnerability CVE-2022-42003 with severity >= 7 (severity = 7.5)",
+                          "reference": {
+                            "type": "SECURITY_VULNERABILITY_REFID",
+                            "value": "CVE-2022-42003"
+                          }
+                        },
+                        {
+                          "reason": "Found security vulnerability CVE-2022-42003 with severity < 9 (severity = 7.5)",
+                          "reference": {
+                            "type": "SECURITY_VULNERABILITY_REFID",
+                            "value": "CVE-2022-42003"
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "policyWaiver": {
+                    "policyWaiverId": "c23871a8f02c48a8ad8aa5f3d7ee54e6",
+                    "comment": "",
+                    "createTime": "2024-10-02T09:02:50.899+0000",
+                    "isObsolete": false,
+                    "scopeOwnerType": "application",
+                    "scopeOwnerId": "72b3ec35bf7b47799b321dae077241cc",
+                    "scopeOwnerName": "producerapp",
+                    "hash": "ee08bbd8975dde844307",
+                    "policyId": "e637ee9396a24ac8b5cfd39b430d121d",
+                    "vulnerabilityId": "CVE-2022-42003",
+                    "creatorId": "admin",
+                    "creatorName": "Admin BuiltIn",
+                    "matcherStrategy": "EXACT_COMPONENT",
+                    "associatedPackageUrl": "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.11.2?type=jar",
+                    "componentIdentifier": {
+                      "format": "maven",
+                      "coordinates": {
+                        "artifactId": "jackson-databind",
+                        "extension": "jar",
+                        "groupId": "com.fasterxml.jackson.core",
+                        "version": "2.11.2"
+                      }
+                    },
+                    "displayName": {
+                      "parts": [
+                        {
+                          "field": "Group",
+                          "value": "com.fasterxml.jackson.core"
+                        },
+                        {
+                          "value": " : "
+                        },
+                        {
+                          "field": "Artifact",
+                          "value": "jackson-databind"
+                        },
+                        {
+                          "value": " : "
+                        },
+                        {
+                          "field": "Version",
+                          "value": "2.11.2"
+                        }
+                      ],
+                      "name": "jackson-databind"
+                    }
+                  }
+                },
+                {
+                  "policyId": "e637ee9396a24ac8b5cfd39b430d121d",
+                  "policyName": "Security-High",
+                  "policyViolationId": "5725570c4bbc4f76963bf91444ead5a1",
+                  "threatLevel": 9,
+                  "constraintViolations": [
+                    {
+                      "constraintId": "f44ab923c6554eeaabeb36a44948c6bd",
+                      "constraintName": "High risk CVSS score",
+                      "reasons": [
+                        {
+                          "reason": "Found security vulnerability CVE-2022-42004 with severity >= 7 (severity = 7.5)",
+                          "reference": {
+                            "type": "SECURITY_VULNERABILITY_REFID",
+                            "value": "CVE-2022-42004"
+                          }
+                        },
+                        {
+                          "reason": "Found security vulnerability CVE-2022-42004 with severity < 9 (severity = 7.5)",
+                          "reference": {
+                            "type": "SECURITY_VULNERABILITY_REFID",
+                            "value": "CVE-2022-42004"
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "policyWaiver": {
+                    "policyWaiverId": "bd7bfeb7464b45bdb0793ae10b1964e6",
+                    "comment": "",
+                    "createTime": "2024-10-02T09:02:57.829+0000",
+                    "isObsolete": false,
+                    "scopeOwnerType": "application",
+                    "scopeOwnerId": "72b3ec35bf7b47799b321dae077241cc",
+                    "scopeOwnerName": "producerapp",
+                    "hash": "ee08bbd8975dde844307",
+                    "policyId": "e637ee9396a24ac8b5cfd39b430d121d",
+                    "vulnerabilityId": "CVE-2022-42004",
+                    "creatorId": "admin",
+                    "creatorName": "Admin BuiltIn",
+                    "matcherStrategy": "EXACT_COMPONENT",
+                    "associatedPackageUrl": "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.11.2?type=jar",
+                    "componentIdentifier": {
+                      "format": "maven",
+                      "coordinates": {
+                        "artifactId": "jackson-databind",
+                        "extension": "jar",
+                        "groupId": "com.fasterxml.jackson.core",
+                        "version": "2.11.2"
+                      }
+                    },
+                    "displayName": {
+                      "parts": [
+                        {
+                          "field": "Group",
+                          "value": "com.fasterxml.jackson.core"
+                        },
+                        {
+                          "value": " : "
+                        },
+                        {
+                          "field": "Artifact",
+                          "value": "jackson-databind"
+                        },
+                        {
+                          "value": " : "
+                        },
+                        {
+                          "field": "Version",
+                          "value": "2.11.2"
+                        }
+                      ],
+                      "name": "jackson-databind"
+                    }
+                  }
+                },
+                {
+                  "policyId": "e637ee9396a24ac8b5cfd39b430d121d",
+                  "policyName": "Security-High",
+                  "policyViolationId": "ee534150cc7942b388ffb8d71370afe7",
+                  "threatLevel": 9,
+                  "constraintViolations": [
+                    {
+                      "constraintId": "f44ab923c6554eeaabeb36a44948c6bd",
+                      "constraintName": "High risk CVSS score",
+                      "reasons": [
+                        {
+                          "reason": "Found security vulnerability sonatype-2021-4682 with severity >= 7 (severity = 7.5)",
+                          "reference": {
+                            "type": "SECURITY_VULNERABILITY_REFID",
+                            "value": "sonatype-2021-4682"
+                          }
+                        },
+                        {
+                          "reason": "Found security vulnerability sonatype-2021-4682 with severity < 9 (severity = 7.5)",
+                          "reference": {
+                            "type": "SECURITY_VULNERABILITY_REFID",
+                            "value": "sonatype-2021-4682"
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "policyWaiver": {
+                    "policyWaiverId": "1afa8f2630a94323ac845f35155427ae",
+                    "comment": "",
+                    "createTime": "2024-10-02T09:03:05.763+0000",
+                    "isObsolete": false,
+                    "scopeOwnerType": "application",
+                    "scopeOwnerId": "72b3ec35bf7b47799b321dae077241cc",
+                    "scopeOwnerName": "producerapp",
+                    "hash": "ee08bbd8975dde844307",
+                    "policyId": "e637ee9396a24ac8b5cfd39b430d121d",
+                    "vulnerabilityId": "sonatype-2021-4682",
+                    "creatorId": "admin",
+                    "creatorName": "Admin BuiltIn",
+                    "matcherStrategy": "EXACT_COMPONENT",
+                    "associatedPackageUrl": "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.11.2?type=jar",
+                    "componentIdentifier": {
+                      "format": "maven",
+                      "coordinates": {
+                        "artifactId": "jackson-databind",
+                        "extension": "jar",
+                        "groupId": "com.fasterxml.jackson.core",
+                        "version": "2.11.2"
+                      }
+                    },
+                    "displayName": {
+                      "parts": [
+                        {
+                          "field": "Group",
+                          "value": "com.fasterxml.jackson.core"
+                        },
+                        {
+                          "value": " : "
+                        },
+                        {
+                          "field": "Artifact",
+                          "value": "jackson-databind"
+                        },
+                        {
+                          "value": " : "
+                        },
+                        {
+                          "field": "Version",
+                          "value": "2.11.2"
+                        }
+                      ],
+                      "name": "jackson-databind"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "application": {
+        "id": "3435fb65e3f644f0b1f5724e4921fef3",
+        "publicId": "webgoat",
+        "name": "webgoat",
+        "organizationId": "559627f756254c4886cc50a7e4ad8c4c",
+        "contactUserName": null
+      },
+      "stages": [
+        {
+          "stageId": "build",
+          "componentPolicyViolations": [
+            {
+              "component": {
+                "packageUrl": "pkg:maven/com.h2database/h2@1.4.187?type=jar",
+                "hash": "f6b109788d1964304583",
+                "componentIdentifier": {
+                  "format": "maven",
+                  "coordinates": {
+                    "artifactId": "h2",
+                    "classifier": "",
+                    "extension": "jar",
+                    "groupId": "com.h2database",
+                    "version": "1.4.187"
+                  }
+                },
+                "displayName": "com.h2database : h2 : 1.4.187"
+              },
+              "waivedPolicyViolations": [
+                {
+                  "policyId": "13fd98fe5b4f4afa8a7fb153c0470b21",
+                  "policyName": "Security-Medium",
+                  "policyViolationId": "86b1782d7d324a6a8c3fe2cb36e4b2c0",
+                  "threatLevel": 7,
+                  "constraintViolations": [
+                    {
+                      "constraintId": "26891d8b627843c6a824c13fc5d59d1d",
+                      "constraintName": "Medium risk CVSS score",
+                      "reasons": [
+                        {
+                          "reason": "Found security vulnerability sonatype-2018-0863 with severity >= 4 (severity = 6.0)",
+                          "reference": {
+                            "type": "SECURITY_VULNERABILITY_REFID",
+                            "value": "sonatype-2018-0863"
+                          }
+                        },
+                        {
+                          "reason": "Found security vulnerability sonatype-2018-0863 with severity < 7 (severity = 6.0)",
+                          "reference": {
+                            "type": "SECURITY_VULNERABILITY_REFID",
+                            "value": "sonatype-2018-0863"
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "policyWaiver": {
+                    "policyWaiverId": "2a2451991a7e4b0b84915e022439acff",
+                    "comment": "",
+                    "createTime": "2024-08-16T04:04:02.026+0000",
+                    "isObsolete": false,
+                    "scopeOwnerType": "application",
+                    "scopeOwnerId": "3435fb65e3f644f0b1f5724e4921fef3",
+                    "scopeOwnerName": "webgoat",
+                    "hash": "f6b109788d1964304583",
+                    "policyId": "13fd98fe5b4f4afa8a7fb153c0470b21",
+                    "vulnerabilityId": "sonatype-2018-0863",
+                    "creatorId": "admin",
+                    "creatorName": "Admin BuiltIn",
+                    "matcherStrategy": "EXACT_COMPONENT",
+                    "associatedPackageUrl": "pkg:maven/com.h2database/h2@1.4.187?type=jar",
+                    "componentIdentifier": {
+                      "format": "maven",
+                      "coordinates": {
+                        "artifactId": "h2",
+                        "extension": "jar",
+                        "groupId": "com.h2database",
+                        "version": "1.4.187"
+                      }
+                    },
+                    "displayName": {
+                      "parts": [
+                        {
+                          "field": "Group",
+                          "value": "com.h2database"
+                        },
+                        {
+                          "value": " : "
+                        },
+                        {
+                          "field": "Artifact",
+                          "value": "h2"
+                        },
+                        {
+                          "value": " : "
+                        },
+                        {
+                          "field": "Version",
+                          "value": "1.4.187"
+                        }
+                      ],
+                      "name": "h2"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "repositoryWaivers": []
+}
