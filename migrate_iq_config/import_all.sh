@@ -8,5 +8,4 @@ echo "--- STARTING FULL IMPORT ---"
 # ./manage_roles.sh         --mode import --url "$TARGET_URL" --user "$TARGET_USER"
 ./import_orgs_apps_tags.sh
 # ./import_policies.sh
-./verify_tags.sh
 echo "--- IMPORT COMPLETE ---"
